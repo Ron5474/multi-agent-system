@@ -1,0 +1,19 @@
+services:
+  bot:
+    image: ronp2805/life-os:latest
+    command: python bot.py
+    env_file: .env
+    volumes:
+      - memory:/app/memory
+    restart: unless-stopped
+
+  scheduler:
+    image: ronp2805/life-os:latest
+    command: python scheduler.py
+    env_file: .env
+    volumes:
+      - memory:/app/memory
+    restart: unless-stopped
+
+volumes:
+  memory:

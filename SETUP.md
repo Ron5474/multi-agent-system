@@ -74,9 +74,8 @@ LLM_MODEL=qwen-3.5
 # Discord bot token (from step 2c)
 DISCORD_BOT_TOKEN=your-discord-bot-token
 
-# Canvas LMS (from step 4)
-CANVAS_BASE_URL=https://sjsu.instructure.com
-CANVAS_API_TOKEN=your-canvas-token
+# Canvas iCal feed URL (from step 4)
+CANVAS_ICAL_URL=https://sjsu.instructure.com/feeds/calendars/user_YOURTOKEN.ics
 
 # Webhook URLs (one per channel, from step 2b)
 DISCORD_WEBHOOK_GENERAL=https://discord.com/api/webhooks/...
@@ -89,20 +88,18 @@ DISCORD_WEBHOOK_TASKS=https://discord.com/api/webhooks/...
 
 ---
 
-## 4. Canvas API Token
+## 4. Canvas iCal Feed
 
-The Assignment Scout pulls your deadlines directly from Canvas (SJSU).
+The Assignment Scout pulls your deadlines from your personal Canvas calendar feed — no API token or IT approval needed.
 
-1. Log into [canvas.sjsu.edu](https://sjsu.instructure.com)
-2. Go to **Account** (top-left avatar) → **Settings**
-3. Scroll down to **Approved Integrations** → click **+ New Access Token**
-4. Give it a name (e.g. "Life OS Agent") and click **Generate Token**
-5. Copy the token — you won't see it again
+1. Log into [sjsu.instructure.com](https://sjsu.instructure.com)
+2. Click **Calendar** in the left sidebar
+3. At the bottom of the page, click **Calendar Feed**
+4. Copy the URL that appears (it looks like `https://sjsu.instructure.com/feeds/calendars/user_XXXX.ics`)
 
 Then in `.env`:
 ```
-CANVAS_BASE_URL=https://sjsu.instructure.com
-CANVAS_API_TOKEN=your-token-here
+CANVAS_ICAL_URL=https://sjsu.instructure.com/feeds/calendars/user_YOURTOKEN.ics
 ```
 
 ---
@@ -154,7 +151,7 @@ Expected: A health report appears in your Discord `#system` channel.
 cd multi-agent
 venv/bin/python3 -c "from agents.assignment_scout import run_scan; run_scan()"
 ```
-Expected: Deadline summary posted to `#school` (requires `CANVAS_API_TOKEN` in `.env`).
+Expected: Deadline summary posted to `#school` (requires `CANVAS_ICAL_URL` in `.env`).
 
 ---
 
@@ -187,7 +184,7 @@ multi-agent/
 ├── tools/
 │   ├── memory.py           ← read/write markdown memory files
 │   ├── file_reader.py      ← read PDFs and text files
-│   ├── canvas.py           ← fetch assignments from Canvas API
+│   ├── canvas.py           ← fetch assignments from Canvas iCal feed
 │   ├── web_search.py       ← DuckDuckGo search
 │   └── discord_tools.py    ← post to Discord via webhooks
 ├── prompts/                ← system prompt for each agent

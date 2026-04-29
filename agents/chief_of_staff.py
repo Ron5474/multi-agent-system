@@ -1,6 +1,6 @@
 from pathlib import Path
 from core.agent_loop import run
-from core.task_queue import add_task, list_tasks
+from core.task_queue import add_task, list_tasks, remove_task
 from tools.memory import read_memory, write_memory, append_log
 from tools.discord_tools import post_to_discord
 
@@ -78,6 +78,20 @@ _TOOLS = [
     {
         "type": "function",
         "function": {
+            "name": "remove_task",
+            "description": "Remove a task from the queue by its id",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "task_id": {"type": "string"},
+                },
+                "required": ["task_id"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "post_to_discord",
             "description": "Post a message to a Discord channel",
             "parameters": {
@@ -98,6 +112,7 @@ _HANDLERS = {
     "append_log": append_log,
     "add_task": add_task,
     "list_tasks": list_tasks,
+    "remove_task": remove_task,
     "post_to_discord": post_to_discord,
 }
 

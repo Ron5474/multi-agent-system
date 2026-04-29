@@ -43,6 +43,15 @@ def update_status(task_id: str, status: str) -> None:
     _save(tasks)
 
 
+def remove_task(task_id: str) -> str:
+    tasks = _load()
+    remaining = [t for t in tasks if t["id"] != task_id]
+    if len(remaining) == len(tasks):
+        return f"No task found with id {task_id}"
+    _save(remaining)
+    return f"Task {task_id} removed."
+
+
 def list_tasks(type: str | None = None) -> list[dict]:
     tasks = _load()
     if type:

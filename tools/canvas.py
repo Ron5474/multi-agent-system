@@ -1,60 +1,62 @@
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import requests
+from icalendar import Calendar
 from dotenv import load_dotenv
 
 load_dotenv()
 
-_BASE_URL = os.getenv("CANVAS_BASE_URL", "https://sjsu.instructure.com")
-_TOKEN = os.getenv("CANVAS_API_TOKEN")
-
-
-def _headers() -> dict:
-    return {"Authorization": f"Bearer {_TOKEN}"}
+_ICAL_URL = os.getenv("CANVAS_ICAL_URL")
 
 
 def get_upcoming_assignments(days: int = 14) -> str:
-    if not _TOKEN:
-        return "CANVAS_API_TOKEN not set in .env"
+    if not _ICAL_URL:
+        return "CANVAS_ICAL_URL not set in .env"
 
-    courses_resp = requests.get(
-        f"{_BASE_URL}/api/v1/courses",
-        headers=_headers(),
-        params={"enrollment_state": "active", "per_page": 50},
-    )
-    if courses_resp.status_code != 200:
-        return f"Failed to fetch courses: HTTP {courses_resp.status_code}"
+    resp = requests.get(_ICAL_URL, timeout=10)
+    if resp.status_code != 200:
+        return f"Failed to fetch iCal feed: HTTP {resp.status_code}"
 
-    courses = {c["id"]: c["name"] for c in courses_resp.json() if "name" in c}
+    cal = Calendar.from_ical(resp.content)
     now = datetime.now(timezone.utc)
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    cutoff = today_start + timedelta(days=days)
     upcoming = []
 
-    for course_id, course_name in courses.items():
-        assignments_resp = requests.get(
-            f"{_BASE_URL}/api/v1/courses/{course_id}/assignments",
-            headers=_headers(),
-            params={"per_page": 50, "order_by": "due_at"},
-        )
-        if assignments_resp.status_code != 200:
+    for component in cal.walk():
+        if component.name != "VEVENT":
             continue
-        for a in assignments_resp.json():
-            due_at = a.get("due_at")
-            if not due_at:
-                continue
-            due = datetime.fromisoformat(due_at.replace("Z", "+00:00"))
-            delta = (due - now).days
-            if 0 <= delta <= days:
-                upcoming.append({
-                    "course": course_name,
-                    "name": a["name"],
-                    "due_at": due.strftime("%b %d %I:%M %p"),
-                    "days_left": delta,
-                    "url": a.get("html_url", ""),
-                })
+        due = component.get("DTSTART")
+        if not due:
+            continue
+        due_dt = due.dt
+        if not hasattr(due_dt, "tzinfo"):
+            due_dt = datetime(due_dt.year, due_dt.month, due_dt.day, tzinfo=timezone.utc)
+        if due_dt.tzinfo is None:
+            due_dt = due_dt.replace(tzinfo=timezone.utc)
+        if not (today_start <= due_dt <= cutoff):
+            continue
+
+        summary = str(component.get("SUMMARY", "Untitled"))
+        delta = (due_dt - today_start).days
+        upcoming.append({
+            "name": summary,
+            "due_at": due_dt.strftime("%b %d %I:%M %p"),
+            "days_left": delta,
+            "due_dt": due_dt,
+        })
 
     if not upcoming:
         return f"No assignments due in the next {days} days."
 
     upcoming.sort(key=lambda x: x["days_left"])
-    lines = [f"- [{a['course']}] {a['name']} — due {a['due_at']} ({a['days_left']}d)" for a in upcoming]
+    lines = []
+    for a in upcoming:
+        if a["days_left"] == 0:
+            time_str = "today"
+        elif a["days_left"] == 1:
+            time_str = "tomorrow"
+        else:
+            time_str = f"{a['days_left']}d"
+        lines.append(f"- {a['name']} — due {a['due_at']} ({time_str})")
     return "\n".join(lines)
