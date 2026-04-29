@@ -74,8 +74,9 @@ LLM_MODEL=qwen-3.5
 # Discord bot token (from step 2c)
 DISCORD_BOT_TOKEN=your-discord-bot-token
 
-# Path to folder containing your syllabus/assignment PDFs
-SCHOOL_FILES_DIR=/path/to/your/school/files
+# Canvas LMS (from step 4)
+CANVAS_BASE_URL=https://canvas.sjsu.edu
+CANVAS_API_TOKEN=your-canvas-token
 
 # Webhook URLs (one per channel, from step 2b)
 DISCORD_WEBHOOK_GENERAL=https://discord.com/api/webhooks/...
@@ -88,19 +89,20 @@ DISCORD_WEBHOOK_TASKS=https://discord.com/api/webhooks/...
 
 ---
 
-## 4. School Files Folder
+## 4. Canvas API Token
 
-Create a folder somewhere on your machine and put your syllabus PDFs and assignment sheets in it. Point `SCHOOL_FILES_DIR` at that folder.
+The Assignment Scout pulls your deadlines directly from Canvas (SJSU).
 
-Example:
-```bash
-mkdir ~/school-files
-# copy your PDFs in there
-```
+1. Log into [canvas.sjsu.edu](https://canvas.sjsu.edu)
+2. Go to **Account** (top-left avatar) → **Settings**
+3. Scroll down to **Approved Integrations** → click **+ New Access Token**
+4. Give it a name (e.g. "Life OS Agent") and click **Generate Token**
+5. Copy the token — you won't see it again
 
 Then in `.env`:
 ```
-SCHOOL_FILES_DIR=/home/ron/school-files
+CANVAS_BASE_URL=https://canvas.sjsu.edu
+CANVAS_API_TOKEN=your-token-here
 ```
 
 ---
@@ -152,7 +154,7 @@ Expected: A health report appears in your Discord `#system` channel.
 cd multi-agent
 venv/bin/python3 -c "from agents.assignment_scout import run_scan; run_scan()"
 ```
-Expected: Deadline summary posted to `#school` (requires school files in `SCHOOL_FILES_DIR`).
+Expected: Deadline summary posted to `#school` (requires `CANVAS_API_TOKEN` in `.env`).
 
 ---
 
@@ -161,7 +163,7 @@ Expected: Deadline summary posted to `#school` (requires school files in `SCHOOL
 | Time | Agent | Action |
 |---|---|---|
 | 8:00 AM | Chief of Staff | Morning brief → `#morning-brief` |
-| 8:05 AM | Assignment Scout | Scan school files → `#school` |
+| 8:05 AM | Assignment Scout | Fetch Canvas deadlines → `#school` |
 | 8:10 AM | System Monitor | Health check → `#system` |
 | Every 30 min | Research Analyst | Poll task queue, run pending research |
 | 8:00 PM | System Monitor | Evening health check → `#system` |
@@ -185,6 +187,7 @@ multi-agent/
 ├── tools/
 │   ├── memory.py           ← read/write markdown memory files
 │   ├── file_reader.py      ← read PDFs and text files
+│   ├── canvas.py           ← fetch assignments from Canvas API
 │   ├── web_search.py       ← DuckDuckGo search
 │   └── discord_tools.py    ← post to Discord via webhooks
 ├── prompts/                ← system prompt for each agent

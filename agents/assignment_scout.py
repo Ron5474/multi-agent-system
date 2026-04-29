@@ -1,42 +1,24 @@
-import os
 from pathlib import Path
-from dotenv import load_dotenv
 from core.agent_loop import run
 from core.task_queue import add_task
 from tools.memory import write_memory, append_log
-from tools.file_reader import read_file, list_files
+from tools.canvas import get_upcoming_assignments
 from tools.discord_tools import post_to_discord
 
-load_dotenv()
-
 _SYSTEM_PROMPT = (Path(__file__).parent.parent / "prompts" / "assignment_scout.md").read_text()
-_SCHOOL_DIR = os.getenv("SCHOOL_FILES_DIR", ".")
 
 _TOOLS = [
     {
         "type": "function",
         "function": {
-            "name": "list_files",
-            "description": "List files in the school files directory",
+            "name": "get_upcoming_assignments",
+            "description": "Fetch upcoming assignments from Canvas LMS within a given number of days",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "directory": {"type": "string"},
-                    "extension": {"type": "string", "description": "Optional file extension filter (e.g. 'pdf')"},
+                    "days": {"type": "integer", "description": "How many days ahead to look (default 14)"},
                 },
-                "required": ["directory"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "read_file",
-            "description": "Read a file (text or PDF)",
-            "parameters": {
-                "type": "object",
-                "properties": {"path": {"type": "string"}},
-                "required": ["path"],
+                "required": [],
             },
         },
     },
@@ -44,11 +26,11 @@ _TOOLS = [
         "type": "function",
         "function": {
             "name": "add_task",
-            "description": "Add a task to the queue",
+            "description": "Add a task to the agent queue",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "type": {"type": "string", "description": "Task type: school, research"},
+                    "type": {"type": "string", "description": "Task type: school or research"},
                     "payload": {"type": "string"},
                 },
                 "required": ["type", "payload"],
@@ -59,7 +41,7 @@ _TOOLS = [
         "type": "function",
         "function": {
             "name": "write_memory",
-            "description": "Write content to a memory file",
+            "description": "Save scan results to memory",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -102,16 +84,10 @@ _TOOLS = [
 
 def run_scan() -> str:
     handlers = {
-        "list_files": list_files,
-        "read_file": read_file,
+        "get_upcoming_assignments": get_upcoming_assignments,
         "add_task": add_task,
         "write_memory": write_memory,
         "append_log": append_log,
         "post_to_discord": post_to_discord,
     }
-    return run(
-        _SYSTEM_PROMPT,
-        f"Scan the school files directory at {_SCHOOL_DIR} for upcoming deadlines.",
-        _TOOLS,
-        handlers,
-    )
+    return run(_SYSTEM_PROMPT, "Fetch upcoming assignments from Canvas and report deadlines.", _TOOLS, handlers)
