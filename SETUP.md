@@ -75,7 +75,7 @@ LLM_MODEL=qwen-3.5
 DISCORD_BOT_TOKEN=your-discord-bot-token
 
 # Canvas LMS (from step 4)
-CANVAS_BASE_URL=https://canvas.sjsu.edu
+CANVAS_BASE_URL=https://sjsu.instructure.com
 CANVAS_API_TOKEN=your-canvas-token
 
 # Webhook URLs (one per channel, from step 2b)
@@ -93,7 +93,7 @@ DISCORD_WEBHOOK_TASKS=https://discord.com/api/webhooks/...
 
 The Assignment Scout pulls your deadlines directly from Canvas (SJSU).
 
-1. Log into [canvas.sjsu.edu](https://canvas.sjsu.edu)
+1. Log into [canvas.sjsu.edu](https://sjsu.instructure.com)
 2. Go to **Account** (top-left avatar) → **Settings**
 3. Scroll down to **Approved Integrations** → click **+ New Access Token**
 4. Give it a name (e.g. "Life OS Agent") and click **Generate Token**
@@ -101,7 +101,7 @@ The Assignment Scout pulls your deadlines directly from Canvas (SJSU).
 
 Then in `.env`:
 ```
-CANVAS_BASE_URL=https://canvas.sjsu.edu
+CANVAS_BASE_URL=https://sjsu.instructure.com
 CANVAS_API_TOKEN=your-token-here
 ```
 

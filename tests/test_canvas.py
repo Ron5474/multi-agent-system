@@ -9,7 +9,7 @@ def _future(days):
 def test_get_upcoming_returns_formatted_assignments():
     mock_courses = [{"id": 1, "name": "CS280"}]
     mock_assignments = [
-        {"name": "HW3", "due_at": _future(5), "html_url": "https://canvas.sjsu.edu/courses/1/assignments/1"},
+        {"name": "HW3", "due_at": _future(5), "html_url": "https://sjsu.instructure.com/courses/1/assignments/1"},
     ]
 
     with patch("tools.canvas._TOKEN", "fake-token"), \

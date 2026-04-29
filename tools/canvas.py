@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-_BASE_URL = os.getenv("CANVAS_BASE_URL", "https://canvas.sjsu.edu")
+_BASE_URL = os.getenv("CANVAS_BASE_URL", "https://sjsu.instructure.com")
 _TOKEN = os.getenv("CANVAS_API_TOKEN")
 
 
