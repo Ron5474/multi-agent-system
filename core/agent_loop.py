@@ -7,11 +7,12 @@ def run(
     user_message: str,
     tools: list[dict],
     tool_handlers: dict[str, callable],
+    history: list[dict] | None = None,
 ) -> str:
-    messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_message},
-    ]
+    messages = [{"role": "system", "content": system_prompt}]
+    if history:
+        messages.extend(history)
+    messages.append({"role": "user", "content": user_message})
 
     while True:
         response = chat(messages, tools if tools else None)

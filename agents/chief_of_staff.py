@@ -1,6 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 from core.agent_loop import run
+from core.conversation_buffer import load_buffer, save_exchange
 from core.task_queue import add_task, list_tasks, remove_task
 from tools.memory import read_memory, write_memory, append_log, check_stale_memory
 from tools.discord_tools import post_to_discord
@@ -176,7 +177,10 @@ _HANDLERS = {
 
 
 def handle_message(user_message: str) -> str:
-    return run(_SYSTEM_PROMPT, user_message, _TOOLS, _HANDLERS)
+    history = load_buffer()
+    reply = run(_SYSTEM_PROMPT, user_message, _TOOLS, _HANDLERS, history=history)
+    save_exchange(user_message, reply)
+    return reply
 
 
 def send_morning_brief() -> str:
