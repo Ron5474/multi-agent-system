@@ -159,8 +159,8 @@ Expected: Deadline summary posted to `#school` (requires `CANVAS_ICAL_URL` in `.
 
 | Time | Agent | Action |
 |---|---|---|
-| 8:00 AM | Chief of Staff | Morning brief → `#morning-brief` |
-| 8:05 AM | Assignment Scout | Fetch Canvas deadlines → `#school` |
+| 8:00 AM | Assignment Scout | Fetch Canvas deadlines → `#school` |
+| 8:05 AM | Chief of Staff | Morning brief → `#morning-brief` |
 | 8:10 AM | System Monitor | Health check → `#system` |
 | Every 30 min | Research Analyst | Poll task queue, run pending research |
 | 8:00 PM | System Monitor | Evening health check → `#system` |
