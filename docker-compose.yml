@@ -6,6 +6,8 @@ services:
     volumes:
       - memory:/app/memory
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   scheduler:
     image: ronp2805/life-os:latest
@@ -14,6 +16,8 @@ services:
     volumes:
       - memory:/app/memory
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
 volumes:
   memory:
