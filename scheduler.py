@@ -3,6 +3,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from agents.system_monitor import run_health_check
 from agents.assignment_scout import run_scan
 from agents.research_analyst import run_pending_tasks
+from agents.study_coach import run_pending_tasks as run_pending_study
 from agents.chief_of_staff import send_morning_brief, consolidate_memory, weekly_reflection
 
 logging.basicConfig(level=logging.INFO)
@@ -27,6 +28,12 @@ def morning_brief():
 def research_poll():
     logger.info("Research Analyst polling queue")
     run_pending_tasks()
+
+
+@scheduler.scheduled_job("cron", minute="*/30")
+def study_poll():
+    logger.info("Study Coach polling queue")
+    run_pending_study()
 
 
 @scheduler.scheduled_job("cron", hour=8, minute=10)

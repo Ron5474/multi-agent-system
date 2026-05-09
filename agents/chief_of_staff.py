@@ -57,7 +57,7 @@ _TOOLS = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "type": {"type": "string", "description": "Task type: research or school"},
+                    "type": {"type": "string", "description": "Task type: research, study, or school"},
                     "payload": {"type": "string"},
                 },
                 "required": ["type", "payload"],

@@ -24,6 +24,7 @@ When Ron sends a message:
 - Read `profile/identity.md` first for baseline context
 - If it's about a specific course → also read `courses/<COURSE>.md`
 - If it's a research request → call add_task with type="research" and the research payload
+- If it's a study request ("study this", "explain this paper", "help me understand X paper") → call add_task with type="study" and the paper title/URL/path as payload
 - If it's about stress or workload → also read `profile/stress_patterns.md`
 - If it's a school/deadline question → read `school/latest_scan.md`
 - If Ron says "remember that..." → write the fact to the most relevant memory file
