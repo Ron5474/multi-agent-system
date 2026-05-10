@@ -28,13 +28,13 @@ def morning_brief():
     send_morning_brief()
 
 
-@scheduler.scheduled_job("cron", minute="*/30")
+@scheduler.scheduled_job("cron", minute="*/5")
 def research_poll():
     logger.info("Research Analyst polling queue")
     run_pending_tasks()
 
 
-@scheduler.scheduled_job("cron", minute="*/30")
+@scheduler.scheduled_job("cron", minute="*/5")
 def study_poll():
     logger.info("Study Coach polling queue")
     run_pending_study()
