@@ -28,7 +28,8 @@ async def on_message(message: discord.Message):
     async with message.channel.typing():
         loop = asyncio.get_event_loop()
         response = await loop.run_in_executor(None, handle_message, message.content)
-        await message.channel.send(response)
+        for chunk in [response[i:i+2000] for i in range(0, len(response), 2000)]:
+            await message.channel.send(chunk)
 
     await bot.process_commands(message)
 
