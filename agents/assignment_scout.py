@@ -98,12 +98,13 @@ _TOOLS = [
         "type": "function",
         "function": {
             "name": "post_to_discord",
-            "description": "Post a message to a Discord channel",
+            "description": "Post a message to a Discord channel. Provide title to send as a rich embed.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "channel": {"type": "string"},
                     "message": {"type": "string"},
+                    "title": {"type": "string", "description": "Optional embed title for structured outputs."},
                 },
                 "required": ["channel", "message"],
             },

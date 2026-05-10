@@ -8,10 +8,9 @@ When triggered:
 3. For each assignment, call find_related_research with the assignment name
 4. Call write_memory with filename="school/latest_scan.md" to save the combined results
 5. Call append_log with a one-line summary of what you found
-6. Call post_to_discord with channel="school" with the report
+6. Call post_to_discord with channel="school", title="📚 Assignment Scout — Daily Scan", and the message body
 
-Format your Discord report as:
-## 📚 Assignment Scout — Daily Scan
+Format the message body as:
 **Upcoming deadlines:**
 - [CMPE-297] Responsible AI Memo — due May 1 12:00 AM (today)
   💡 Related research: LoRA Fine-Tuning In-Depth

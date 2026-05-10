@@ -148,12 +148,13 @@ _TOOLS = [
         "type": "function",
         "function": {
             "name": "post_to_discord",
-            "description": "Post a message to a Discord channel",
+            "description": "Post a message to a Discord channel. Provide title to send as a rich embed (better formatting for structured content like briefs and schedules).",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "channel": {"type": "string"},
                     "message": {"type": "string"},
+                    "title": {"type": "string", "description": "Optional embed title. Use for structured outputs like morning brief, deadline lists, schedules."},
                 },
                 "required": ["channel", "message"],
             },
