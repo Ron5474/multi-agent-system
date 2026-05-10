@@ -6,7 +6,11 @@ from agents.research_analyst import run_pending_tasks
 from agents.study_coach import run_pending_tasks as run_pending_study
 from agents.chief_of_staff import send_morning_brief, consolidate_memory, weekly_reflection
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S %Z",
+)
 logger = logging.getLogger(__name__)
 
 scheduler = BlockingScheduler(timezone="America/Los_Angeles")
@@ -54,7 +58,7 @@ def nightly_consolidation():
     consolidate_memory()
 
 
-@scheduler.scheduled_job("cron", day_of_week="sun", hour=21, minute=0)
+@scheduler.scheduled_job("cron", day_of_week="6", hour=21, minute=0)
 def weekly_review():
     logger.info("Running weekly reflection")
     weekly_reflection()
