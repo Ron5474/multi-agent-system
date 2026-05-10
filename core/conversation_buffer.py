@@ -10,7 +10,11 @@ _EXPIRY_HOURS = 2
 def _load_raw() -> dict:
     if not _BUFFER_FILE.exists():
         return {"last_active": None, "messages": []}
-    return json.loads(_BUFFER_FILE.read_text())
+    data = json.loads(_BUFFER_FILE.read_text())
+    if isinstance(data, list):
+        # migrate old format
+        return {"last_active": None, "messages": data}
+    return data
 
 
 def load_buffer() -> list[dict]:
