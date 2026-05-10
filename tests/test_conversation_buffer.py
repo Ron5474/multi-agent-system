@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime, timezone, timedelta
 
 
 @pytest.fixture(autouse=True)
@@ -24,10 +25,29 @@ def test_buffer_capped_at_max_exchanges():
     for i in range(7):
         save_exchange(f"message {i}", f"reply {i}")
     buffer = load_buffer()
-    # max 5 exchanges = 10 messages
     assert len(buffer) == 10
-    # should contain the last 5 exchanges
     assert buffer[0]["content"] == "message 2"
+
+
+def test_buffer_expires_after_2_hours():
+    from core.conversation_buffer import save_exchange, load_buffer, _BUFFER_FILE
+    import json
+    save_exchange("hello", "hi")
+    # backdate last_active by 3 hours
+    data = json.loads(_BUFFER_FILE.read_text())
+    data["last_active"] = (datetime.now(timezone.utc) - timedelta(hours=3)).isoformat()
+    _BUFFER_FILE.write_text(json.dumps(data))
+    assert load_buffer() == []
+
+
+def test_buffer_still_valid_within_2_hours():
+    from core.conversation_buffer import save_exchange, load_buffer, _BUFFER_FILE
+    import json
+    save_exchange("hello", "hi")
+    data = json.loads(_BUFFER_FILE.read_text())
+    data["last_active"] = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()
+    _BUFFER_FILE.write_text(json.dumps(data))
+    assert len(load_buffer()) == 2
 
 
 def test_clear_buffer():
