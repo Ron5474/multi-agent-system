@@ -1,7 +1,7 @@
 import json
 import uuid
-from datetime import datetime
 from pathlib import Path
+from core.timezone import local_now_str
 
 TASKS_FILE = Path("memory/tasks.json")
 
@@ -24,7 +24,7 @@ def add_task(type: str, payload: str) -> dict:
         "type": type,
         "payload": payload,
         "status": "pending",
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": local_now_str(),
     }
     tasks.append(task)
     _save(tasks)

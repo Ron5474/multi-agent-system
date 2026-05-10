@@ -1,7 +1,7 @@
-from datetime import datetime
 from pathlib import Path
 from core.agent_loop import run
 from core.conversation_buffer import load_buffer, save_exchange
+from core.timezone import local_now
 from core.task_queue import add_task, list_tasks, remove_task
 from tools.memory import read_memory, write_memory, append_log, check_stale_memory
 from tools.discord_tools import post_to_discord
@@ -185,16 +185,16 @@ def handle_message(user_message: str) -> str:
 
 
 def send_morning_brief() -> str:
-    today = datetime.now().strftime("%A, %B %-d, %Y")
+    today = local_now().strftime("%A, %B %-d, %Y")
     return run(_SYSTEM_PROMPT, f"Send the morning brief now. Today's date is {today}.", _TOOLS, _HANDLERS)
 
 
 def consolidate_memory() -> str:
-    today = datetime.now().strftime("%A, %B %-d, %Y")
+    today = local_now().strftime("%A, %B %-d, %Y")
     return run(_SYSTEM_PROMPT, f"Run nightly memory consolidation now. Today is {today}.", _TOOLS, _HANDLERS)
 
 
 def weekly_reflection() -> str:
-    now = datetime.now()
+    now = local_now()
     week_label = f"{now.year}-W{now.isocalendar()[1]:02d}"
     return run(_SYSTEM_PROMPT, f"Generate the weekly reflection now. Week: {week_label}.", _TOOLS, _HANDLERS)

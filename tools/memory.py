@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
+from core.timezone import local_now_str
 
 MEMORY_DIR = Path("memory")
 _METADATA_FILE = MEMORY_DIR / "_metadata.json"
@@ -53,7 +54,7 @@ def check_stale_memory(days: int = 90) -> str:
 def append_log(entry: str) -> str:
     path = MEMORY_DIR / "daily_log.md"
     path.parent.mkdir(exist_ok=True)
-    timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    timestamp = local_now_str()
     with open(path, "a") as f:
         f.write(f"\n## {timestamp}\n{entry}\n")
     return "Logged"
